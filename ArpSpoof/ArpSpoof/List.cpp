@@ -5,27 +5,27 @@
 
 List List_Create()
 {
-	List _List;
-	_List = (List)malloc(sizeof(struct ListNode));
-	_List->e = NONE;
-	_List->next = NULL;
+	List L;
+	L = (List)malloc(sizeof(struct ListNode));
+	L->e = NONE;
+	L->next = NULL;
 
-	return _List;
+	return L;
 }
 
-int List_isEmpty(List _List)
+int List_isEmpty(List L)
 {
-	return _List->next == NULL;
+	return L->next == NULL;
 }
 
-int List_Add(List _List, ElemType e)
+int List_Add(List L, ListElement e)
 {
 	List NewNode;
 	Position P;
 
-	for (P = _List; P; P = P->next)
+	for (P = L; P; P = P->next)
 	{
-		if (P->e == e)
+		if (P->e.ipv4 == e.ipv4)
 			return 0; // Element already exists.
 		if (P->next == NULL)
 			break;
@@ -38,28 +38,30 @@ int List_Add(List _List, ElemType e)
 	return 1;
 }
 
-Position List_Find(List _List, ElemType e)
+Position List_Find(List L, ListElement e)
 {
 	Position Prev;
-	Prev = List_FindPrev(_List, e);
+	Prev = List_FindPrev(L, e);
 
 	return Prev ? Prev->next : NULL;
 }
 
-Position List_FindPrev(List _List, ElemType e)
+Position List_FindPrev(List L, ListElement e)
 {
 	Position P;
 
-	for (P = _List;P->next && P->next->e != e;P = P->next);
-	
+	for (P = L;
+		P->next && P->next->e.ipv4 != e.ipv4;
+		P = P->next);
+
 	return P->next ? P : NULL;
 }
 
-void List_Delete(List _List, ElemType e)
+void List_Delete(List L, ListElement e)
 {
 	Position Prev, Next;
 
-	Prev = List_FindPrev(_List, e);
+	Prev = List_FindPrev(L, e);
 	if (Prev != NULL)
 	{
 		Next = Prev->next->next;
@@ -68,22 +70,22 @@ void List_Delete(List _List, ElemType e)
 	}
 }
 
-void List_Display(List _List)
+void List_Display(List L)
 {
 	Position P;
 
 	printf("\n");
-	for (P = _List->next;P;P = P->next)
+	for (P = L->next; P; P = P->next)
 	{
-		printf("%.8X ", P->e);
+		printf("%.8X ", P->e.ipv4);
 	}
 	printf("\n");
 }
 
-void List_Destory(List _List)
+void List_Destory(List L)
 {
 	Position P, AfterP;
-	for (P = _List;P;P = AfterP)
+	for (P = L; P; P = AfterP)
 	{
 		AfterP = P->next;
 		free(P);

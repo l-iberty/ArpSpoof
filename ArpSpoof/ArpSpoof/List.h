@@ -1,23 +1,25 @@
 #ifndef LIST_H
 #define LIST_H
+#include "type.h"
 
-typedef unsigned int IPv4_ADDR;
-typedef IPv4_ADDR ElemType;
+#define NONE	{ 0 }
+#define MAC_LEN	6
 
-#define NONE 0
+typedef struct addr_entry ListElement;
 
-typedef struct ListNode {
-	ElemType e;
+typedef struct ListNode
+{
+	ListElement e;
 	struct ListNode * next;
 } *List,*Position;
 
 List		List_Create();
-int			List_isEmpty(List _List);
-int			List_Add(List _List, ElemType e);
-Position	List_Find(List _List, ElemType e);
-Position	List_FindPrev(List _List, ElemType e);
-void		List_Delete(List _List, ElemType e);
-void		List_Display(List _List);
-void		List_Destory(List _List);
+int			List_isEmpty(List L);
+int			List_Add(List L, ListElement e);
+Position	List_Find(List L, ListElement e);
+Position	List_FindPrev(List L, ListElement e);
+void		List_Delete(List L, ListElement e);
+void		List_Display(List L);
+void		List_Destory(List L);
 
 #endif // LIST_H

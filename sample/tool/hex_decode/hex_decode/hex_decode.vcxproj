@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FD20078F-0C99-4803-AB70-F4E8164AC177}</ProjectGuid>
+    <ProjectGuid>{95DE1DE0-E93E-44AA-8E69-6146466C636C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ArpSpoof</RootNamespace>
+    <RootNamespace>hex_decode</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -51,14 +51,12 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\WpdPack\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>e:\WpdPack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -80,21 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ArpSpoof.cpp" />
-    <ClCompile Include="IcmpDetect.cpp" />
-    <ClCompile Include="List.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="NetworkAdapter.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ArpSpoof.h" />
-    <ClInclude Include="global.h" />
-    <ClInclude Include="headers.h" />
-    <ClInclude Include="IcmpDetect.h" />
-    <ClInclude Include="List.h" />
-    <ClInclude Include="NetworkAdapter.h" />
-    <ClInclude Include="Pcap.h" />
-    <ClInclude Include="type.h" />
+    <ClCompile Include="hex_decode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,3 @@
+- 文本文件`test.txt`是从WireShark复制的JPEG文件的Hex流
+- `binfile`是解码工具`hex_decode`的输出
+- 将`binfile`附上正确的扩展名`binfile.jpeg`，便可以查看这个JPEG

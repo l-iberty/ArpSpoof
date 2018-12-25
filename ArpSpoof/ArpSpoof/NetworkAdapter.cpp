@@ -1,5 +1,7 @@
 #include "NetworkAdapter.h"
 
+//#define WIRELESS // 无线网络
+
 /////////////////////////////////////////////// public ///////////////////////////////////////////////
 
 NetworkAdapter::NetworkAdapter()
@@ -59,14 +61,14 @@ pcap_t* NetworkAdapter::getAdapterHandle()
 }
 
 /**
-* 获取一个可用的网络适配器对应的 ip 地址(本机 ip 地址)及其掩码.
-* return (0) if succeeded, or (1) if failed
-*/
-int NetworkAdapter::getLocalIpAndMask(u_int *pIp, u_int *pMask)
+ * 获取一个可用的网络适配器对应的 ip 地址(本机 ip 地址)及其掩码.
+ * return (0) if succeeded, or (1) if failed
+ */
+int NetworkAdapter::getLocalIpAndMask(uint32_t *pIp, uint32_t *pMask)
 {
-	u_int ip, mask;
+	uint32_t ip, mask;
 	BOOLEAN bOk = FALSE;
-	for (m_paddr = m_d->addresses;m_paddr;m_paddr = m_paddr->next)
+	for (m_paddr = m_d->addresses; m_paddr; m_paddr = m_paddr->next)
 	{
 		ip = ((struct sockaddr_in *)(m_paddr->addr))->sin_addr.S_un.S_addr;
 		mask = ((struct sockaddr_in *)(m_paddr->netmask))->sin_addr.S_un.S_addr;
@@ -127,7 +129,7 @@ VOID NetworkAdapter::GetNetAddrOfRouter(PDWORD pIpAddr, PUCHAR MacAddr)
 		GetIpNetTable(pIpNetTable, &dwSize, FALSE);
 	}
 
-	for (DWORD i = 0;i < pIpNetTable->dwNumEntries;i++)
+	for (DWORD i = 0; i < pIpNetTable->dwNumEntries; i++)
 	{
 		// 第一条 dwPhysAddrLen 不为 0 的项就是默认网关
 		if (pIpNetTable->table[i].dwPhysAddrLen == MAC_LEN)
@@ -158,26 +160,30 @@ int NetworkAdapter::initDeviceList()
 
 /**
 * 获取适配器参数:
-* 1. 将`m_d`定位到一个可用的网络适配器
-* 2. 获取适配器数量`m_devnum`
-* 3. 获取`m_d`指向的适配器的名字, 结果保存在`m_AdapterName`
+* 1. 将`m_d'定位到一个可用的网络适配器
+* 2. 获取适配器数量`m_devnum'
+* 3. 获取`m_d'指向的适配器的名字, 结果保存在`m_AdapterName'
 */
 void NetworkAdapter::getAdapterParams()
 {
 	int count = 0;
-	bool isLocated = false;
+	bool located = false;
 	pcap_if_t *d;
 	for (d = m_alldevs; d; d = d->next, count++)
 	{
-		if (!isLocated && d->description)
+#ifdef WIRELESS
+		if (!located && d->description)
 		{
 			// 描述信息中含有关键字 "Microsoft" 的适配器即为可用的适配器
 			if (StrStrIA(d->description, "Microsoft"))
 			{
 				m_d = d; // 1. 定位到可用的网络适配器
-				isLocated = true;
+				located = true;
 			}
 		}
+#else
+		printf("\n[%d] %s", count, d->description);
+#endif
 	}
 	if (count == 0)
 	{
@@ -185,6 +191,19 @@ void NetworkAdapter::getAdapterParams()
 	}
 	else
 	{
+#ifndef WIRELESS
+		// 让用户选择一个网络适配器
+		int i, j;
+		printf("\n[NetworkAdapter] choose an available adapter: ");
+		scanf("%d", &i);
+		if (i < 0 || i >= count)
+		{
+			printf("invalid index!\n");
+			exit(1);
+		}
+		for (m_d = m_alldevs, j = 0; m_d && j < i; m_d = m_d->next, j++) {}
+		printf("\n--%s\n", m_d->description);
+#endif
 		m_devnum = count; // 2. 网络适配器数量
 		strcpy(m_AdapterName, m_d->name); // 3. 网络适配器名字
 	}

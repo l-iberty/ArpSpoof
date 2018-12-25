@@ -20,7 +20,7 @@ public:
 	pcap_if_t* getDeviceList();
 	pcap_if_t* getCurrentDevice();
 	pcap_t* getAdapterHandle();
-	int getLocalIpAndMask(u_int *pIp, u_int *pMask);
+	int getLocalIpAndMask(uint32_t *pIp, uint32_t *pMask);
 
 	BOOLEAN GetLocalMac(PUCHAR MacAddr);
 	VOID GetNetAddrOfRouter(PDWORD pIpAddr, PUCHAR MacAddr);
@@ -32,10 +32,10 @@ private:
 private:
 	pcap_if_t *m_alldevs;				// 网络适配器链表结构
 	pcap_if_t *m_d;						// 适配器链表节点定位指针
-	int m_devnum;						// 适配器数量 (unused)
-	pcap_t *m_adhandle;					// pcap句柄
+	pcap_t *m_adhandle;					// 网络适配器句柄
 	pcap_addr_t *m_paddr;				// 网卡地址结构
-	char m_AdapterName[PCAP_BUF_SIZE];
+	char m_AdapterName[PCAP_BUF_SIZE];	// 网络适配器名字
+	int m_devnum;						// 适配器数量 (unused)
 };
 
 #endif // NETWORK_ADAPTER_H
