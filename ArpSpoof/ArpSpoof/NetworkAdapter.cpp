@@ -1,6 +1,6 @@
 #include "NetworkAdapter.h"
 
-//#define WIRELESS // ÎŞÏßÍøÂç
+//#define WIRELESS // æ— çº¿ç½‘ç»œ
 
 /////////////////////////////////////////////// public ///////////////////////////////////////////////
 
@@ -30,12 +30,12 @@ pcap_t* NetworkAdapter::openAdapter()
 {
 	char errbuf[PCAP_ERRBUF_SIZE];
 
-	pcap_t* adhandle = pcap_open(m_AdapterName, // Éè±¸Ãû
-		MAX_SNAP_LEN,	// ¿É´¦ÀíµÄÊı¾İ°ü³¤¶È
-		PCAP_OPENFLAG_PROMISCUOUS, // »ìÔÓÄ£Ê½
-		1000,  // ¶ÁÈ¡³¬Ê±Ê±¼ä
-		NULL, // Ô¶³Ì»úÆ÷ÑéÖ¤
-		errbuf); // ´íÎó»º³å³Ø
+	pcap_t* adhandle = pcap_open(m_AdapterName, // è®¾å¤‡å
+		MAX_SNAP_LEN,	// å¯å¤„ç†çš„æ•°æ®åŒ…é•¿åº¦
+		PCAP_OPENFLAG_PROMISCUOUS, // æ··æ‚æ¨¡å¼
+		1000,  // è¯»å–è¶…æ—¶æ—¶é—´
+		NULL, // è¿œç¨‹æœºå™¨éªŒè¯
+		errbuf); // é”™è¯¯ç¼“å†²æ± 
 
 	if (adhandle == NULL)
 	{
@@ -61,7 +61,7 @@ pcap_t* NetworkAdapter::getAdapterHandle()
 }
 
 /**
- * »ñÈ¡Ò»¸ö¿ÉÓÃµÄÍøÂçÊÊÅäÆ÷¶ÔÓ¦µÄ ip µØÖ·(±¾»ú ip µØÖ·)¼°ÆäÑÚÂë.
+ * è·å–ä¸€ä¸ªå¯ç”¨çš„ç½‘ç»œé€‚é…å™¨å¯¹åº”çš„ ip åœ°å€(æœ¬æœº ip åœ°å€)åŠå…¶æ©ç .
  * return (0) if succeeded, or (1) if failed
  */
 int NetworkAdapter::getLocalIpAndMask(uint32_t *pIp, uint32_t *pMask)
@@ -91,12 +91,12 @@ int NetworkAdapter::getLocalIpAndMask(uint32_t *pIp, uint32_t *pMask)
 
 BOOLEAN NetworkAdapter::GetLocalMac(PUCHAR MacAddr)
 {
-	LPADAPTER lpAdapter = PacketOpenAdapter(m_AdapterName + 8); // `+8` Ìø¹ı"rpcap:\\"
+	LPADAPTER lpAdapter = PacketOpenAdapter(m_AdapterName + 8); // `+8` è·³è¿‡"rpcap:\\"
 	if (!lpAdapter || (lpAdapter->hFile == INVALID_HANDLE_VALUE))
 		return FALSE;
 
 	PPACKET_OID_DATA pOidData = (PPACKET_OID_DATA)malloc(
-		sizeof(PACKET_OID_DATA) + MAC_LEN); // ²é¿´½á¹¹Ìå¶¨Òå£¬½áºÏMACµØÖ·µÄ³¤¶È£¬±ã¿ÉÖªµÀ'+6'µÄº¬Òå
+		sizeof(PACKET_OID_DATA) + MAC_LEN); // æŸ¥çœ‹ç»“æ„ä½“å®šä¹‰ï¼Œç»“åˆMACåœ°å€çš„é•¿åº¦ï¼Œä¾¿å¯çŸ¥é“'+6'çš„å«ä¹‰
 	if (pOidData == NULL)
 	{
 		PacketCloseAdapter(lpAdapter);
@@ -104,7 +104,7 @@ BOOLEAN NetworkAdapter::GetLocalMac(PUCHAR MacAddr)
 	}
 
 	// Retrieve the adapter MAC querying the NIC driver
-	pOidData->Oid = OID_802_3_CURRENT_ADDRESS; // »ñÈ¡ MAC µØÖ·
+	pOidData->Oid = OID_802_3_CURRENT_ADDRESS; // è·å– MAC åœ°å€
 	pOidData->Length = MAC_LEN;
 	memset(pOidData->Data, 0, MAC_LEN);
 
@@ -131,7 +131,7 @@ VOID NetworkAdapter::GetNetAddrOfRouter(PDWORD pIpAddr, PUCHAR MacAddr)
 
 	for (DWORD i = 0; i < pIpNetTable->dwNumEntries; i++)
 	{
-		// µÚÒ»Ìõ dwPhysAddrLen ²»Îª 0 µÄÏî¾ÍÊÇÄ¬ÈÏÍø¹Ø
+		// ç¬¬ä¸€æ¡ dwPhysAddrLen ä¸ä¸º 0 çš„é¡¹å°±æ˜¯é»˜è®¤ç½‘å…³
 		if (pIpNetTable->table[i].dwPhysAddrLen == MAC_LEN)
 		{
 			if (MacAddr != NULL)
@@ -159,10 +159,10 @@ int NetworkAdapter::initDeviceList()
 }
 
 /**
-* »ñÈ¡ÊÊÅäÆ÷²ÎÊı:
-* 1. ½«`m_d'¶¨Î»µ½Ò»¸ö¿ÉÓÃµÄÍøÂçÊÊÅäÆ÷
-* 2. »ñÈ¡ÊÊÅäÆ÷ÊıÁ¿`m_devnum'
-* 3. »ñÈ¡`m_d'Ö¸ÏòµÄÊÊÅäÆ÷µÄÃû×Ö, ½á¹û±£´æÔÚ`m_AdapterName'
+* è·å–é€‚é…å™¨å‚æ•°:
+* 1. å°†`m_d'å®šä½åˆ°ä¸€ä¸ªå¯ç”¨çš„ç½‘ç»œé€‚é…å™¨
+* 2. è·å–é€‚é…å™¨æ•°é‡`m_devnum'
+* 3. è·å–`m_d'æŒ‡å‘çš„é€‚é…å™¨çš„åå­—, ç»“æœä¿å­˜åœ¨`m_AdapterName'
 */
 void NetworkAdapter::getAdapterParams()
 {
@@ -174,10 +174,10 @@ void NetworkAdapter::getAdapterParams()
 #ifdef WIRELESS
 		if (!located && d->description)
 		{
-			// ÃèÊöĞÅÏ¢ÖĞº¬ÓĞ¹Ø¼ü×Ö "Microsoft" µÄÊÊÅäÆ÷¼´Îª¿ÉÓÃµÄÊÊÅäÆ÷
+			// æè¿°ä¿¡æ¯ä¸­å«æœ‰å…³é”®å­— "Microsoft" çš„é€‚é…å™¨å³ä¸ºå¯ç”¨çš„é€‚é…å™¨
 			if (StrStrIA(d->description, "Microsoft"))
 			{
-				m_d = d; // 1. ¶¨Î»µ½¿ÉÓÃµÄÍøÂçÊÊÅäÆ÷
+				m_d = d; // 1. å®šä½åˆ°å¯ç”¨çš„ç½‘ç»œé€‚é…å™¨
 				located = true;
 			}
 		}
@@ -192,7 +192,7 @@ void NetworkAdapter::getAdapterParams()
 	else
 	{
 #ifndef WIRELESS
-		// ÈÃÓÃ»§Ñ¡ÔñÒ»¸öÍøÂçÊÊÅäÆ÷
+		// è®©ç”¨æˆ·é€‰æ‹©ä¸€ä¸ªç½‘ç»œé€‚é…å™¨
 		int i, j;
 		printf("\n[NetworkAdapter] choose an available adapter: ");
 		scanf("%d", &i);
@@ -204,7 +204,7 @@ void NetworkAdapter::getAdapterParams()
 		for (m_d = m_alldevs, j = 0; m_d && j < i; m_d = m_d->next, j++) {}
 		printf("\n--%s\n", m_d->description);
 #endif
-		m_devnum = count; // 2. ÍøÂçÊÊÅäÆ÷ÊıÁ¿
-		strcpy(m_AdapterName, m_d->name); // 3. ÍøÂçÊÊÅäÆ÷Ãû×Ö
+		m_devnum = count; // 2. ç½‘ç»œé€‚é…å™¨æ•°é‡
+		strcpy(m_AdapterName, m_d->name); // 3. ç½‘ç»œé€‚é…å™¨åå­—
 	}
 }

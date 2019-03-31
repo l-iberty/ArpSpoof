@@ -8,10 +8,10 @@
 
 DWORD WINAPI recvICMPThread(LPVOID param);
 
-// pcap_loop »Øµ÷º¯Êı
+// pcap_loop å›è°ƒå‡½æ•°
 void icmp_packet_handler(uint8_t *param, const struct pcap_pkthdr *header, const uint8_t *pkt_data);
 
-// ÓÃÓÚ·â×°´«µİ¸øÏß³Ìº¯ÊıµÄ²ÎÊı
+// ç”¨äºå°è£…ä¼ é€’ç»™çº¿ç¨‹å‡½æ•°çš„å‚æ•°
 typedef struct {
 	pcap_t* adhandle;
 	pcap_if_t* alldevs;
@@ -37,8 +37,8 @@ private:
 	void send_icmp_packet(uint8_t* packet, int len);
 
 private:
-	pcap_t *m_adhandle; // ÍøÂçÊÊÅäÆ÷¾ä±ú
-	HANDLE m_hRecvThread; // ½ÓÊÕICMP±¨ÎÄµÄÏß³Ì¾ä±ú
+	pcap_t *m_adhandle; // ç½‘ç»œé€‚é…å™¨å¥æŸ„
+	HANDLE m_hRecvThread; // æ¥æ”¶ICMPæŠ¥æ–‡çš„çº¿ç¨‹å¥æŸ„
 };
 
 #endif // ICMP_DETECT_H

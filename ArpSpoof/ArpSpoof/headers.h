@@ -2,61 +2,61 @@
 #define HEADERS_H
 #include "type.h"
 
-#define MAC_LEN				6		// MAC µØÖ·, 48 bits = 6 bytes
-#define IPV4_LEN			4		// IPV4 µØÖ·, 32 bits = 4 bytes
-#define PADDING_LEN			18		// ARP Êı¾İ°üµÄÓĞĞ§ÔØºÉ³¤¶È
-#define ICMP_DATA_LEN		32		// ICMP Êı¾İ°üµÄÓĞĞ§ÔØºÉ³¤¶È
+#define MAC_LEN				6		// MAC åœ°å€, 48 bits = 6 bytes
+#define IPV4_LEN			4		// IPV4 åœ°å€, 32 bits = 4 bytes
+#define PADDING_LEN			18		// ARP æ•°æ®åŒ…çš„æœ‰æ•ˆè½½è·é•¿åº¦
+#define ICMP_DATA_LEN		32		// ICMP æ•°æ®åŒ…çš„æœ‰æ•ˆè½½è·é•¿åº¦
 
 
 #pragma pack(push, 1)
 
-#define ETHPROTOCAL_IPV4		0x0800 // ÒÔÌ«ÍøÉÏ²ãĞ­ÒéÀàĞÍ: IPv4
-#define ETHPROTOCAL_ARP			0x0806 // ÒÔÌ«ÍøÉÏ²ãĞ­ÒéÀàĞÍ: ARP
+#define ETHPROTOCAL_IPV4		0x0800 // ä»¥å¤ªç½‘ä¸Šå±‚åè®®ç±»å‹: IPv4
+#define ETHPROTOCAL_ARP			0x0806 // ä»¥å¤ªç½‘ä¸Šå±‚åè®®ç±»å‹: ARP
 
 typedef struct ether_header 
 {
-	uint8_t daddr[MAC_LEN];				// Ä¿µÄ MAC µØÖ·
-	uint8_t saddr[MAC_LEN];				// Ô´ MAC µØÖ·
-	uint16_t prototype;					// ÉÏ²ãĞ­ÒéÀàĞÍ (0x0800->IPv4, 0x0806->ARP)
+	uint8_t daddr[MAC_LEN];				// ç›®çš„ MAC åœ°å€
+	uint8_t saddr[MAC_LEN];				// æº MAC åœ°å€
+	uint16_t prototype;					// ä¸Šå±‚åè®®ç±»å‹ (0x0800->IPv4, 0x0806->ARP)
 } ether_header;
 
 #define HARD_ETHERNET			0x0001
-#define ARP_REQUEST				0x0001 // ARP ÇëÇó
-#define ARP_RESPONCE			0x0002 // ARP Ó¦´ğ
+#define ARP_REQUEST				0x0001 // ARP è¯·æ±‚
+#define ARP_RESPONCE			0x0002 // ARP åº”ç­”
 
 typedef struct arp_header 
 {
-	uint16_t arp_hrd;				// Ó²¼şÀàĞÍ
-	uint16_t arp_pro;				// ÉÏ²ãĞ­ÒéÀàĞÍ
-	uint8_t arp_hln;				// Ó²¼şµØÖ·³¤¶È
-	uint8_t arp_pln;				// Ğ­ÒéµØÖ·³¤¶È
-	uint16_t arp_op;				// ²Ù×÷Ñ¡Ïî (ÇëÇó or Ó¦´ğ)
-	uint8_t arp_shaddr[MAC_LEN];	// ·¢ËÍÕßÓ²¼şµØÖ· (MAC)
-	uint32_t arp_spaddr;			// ·¢ËÍÕßĞ­ÒéµØÖ· (IPv4)
-	uint8_t arp_thaddr[MAC_LEN];	// Ä¿±êÓ²¼şµØÖ· (MAC)
-	uint32_t arp_tpaddr;			// Ä¿±êĞ­ÒéµØÖ· (IPv4)
+	uint16_t arp_hrd;				// ç¡¬ä»¶ç±»å‹
+	uint16_t arp_pro;				// ä¸Šå±‚åè®®ç±»å‹
+	uint8_t arp_hln;				// ç¡¬ä»¶åœ°å€é•¿åº¦
+	uint8_t arp_pln;				// åè®®åœ°å€é•¿åº¦
+	uint16_t arp_op;				// æ“ä½œé€‰é¡¹ (è¯·æ±‚ or åº”ç­”)
+	uint8_t arp_shaddr[MAC_LEN];	// å‘é€è€…ç¡¬ä»¶åœ°å€ (MAC)
+	uint32_t arp_spaddr;			// å‘é€è€…åè®®åœ°å€ (IPv4)
+	uint8_t arp_thaddr[MAC_LEN];	// ç›®æ ‡ç¡¬ä»¶åœ°å€ (MAC)
+	uint32_t arp_tpaddr;			// ç›®æ ‡åè®®åœ°å€ (IPv4)
 } arp_header;
 
 typedef struct arp_packet 
 {
-	ether_header eh;				// ÒÔÌ«ÍøÊ×²¿
-	arp_header ah;					// ARP Ê×²¿
+	ether_header eh;				// ä»¥å¤ªç½‘é¦–éƒ¨
+	arp_header ah;					// ARP é¦–éƒ¨
 } arp_packet;
 
 #define IPV4PROTOCOL_ICMP	1
 
 typedef struct ip_header 
 {
-	uint8_t  ver_ihl;				// °æ±¾ (4 bits) + Ê×²¿³¤¶È (4 bits)
-	uint8_t  tos;					// ·şÎñÀàĞÍ(Type of service) 
-	uint16_t tlen;					// ×Ü³¤(Total length) 
-	uint16_t identification;		// ±êÊ¶(Identification)
-	uint16_t flags_fo;				// ±êÖ¾Î»(Flags) (3 bits) + ¶ÎÆ«ÒÆÁ¿(Fragment offset) (13 bits)
-	uint8_t  ttl;					// ´æ»îÊ±¼ä(Time to live)
-	uint8_t  proto;					// ÉÏ²ãĞ­Òé(Protocol)
-	uint16_t cksum;					// Ê×²¿Ğ£ÑéºÍ(Header checksum)
-	uint32_t  saddr;				// Ô´µØÖ·(Source address)
-	uint32_t  daddr;				// Ä¿µÄµØÖ·(Destination address)
+	uint8_t  ver_ihl;				// ç‰ˆæœ¬ (4 bits) + é¦–éƒ¨é•¿åº¦ (4 bits)
+	uint8_t  tos;					// æœåŠ¡ç±»å‹(Type of service) 
+	uint16_t tlen;					// æ€»é•¿(Total length) 
+	uint16_t identification;		// æ ‡è¯†(Identification)
+	uint16_t flags_fo;				// æ ‡å¿—ä½(Flags) (3 bits) + æ®µåç§»é‡(Fragment offset) (13 bits)
+	uint8_t  ttl;					// å­˜æ´»æ—¶é—´(Time to live)
+	uint8_t  proto;					// ä¸Šå±‚åè®®(Protocol)
+	uint16_t cksum;					// é¦–éƒ¨æ ¡éªŒå’Œ(Header checksum)
+	uint32_t  saddr;				// æºåœ°å€(Source address)
+	uint32_t  daddr;				// ç›®çš„åœ°å€(Destination address)
 } ip_header;
 
 #define ICMP_REQUEST	8
@@ -64,39 +64,39 @@ typedef struct ip_header
 
 typedef struct icmp_header 
 {
-	uint8_t type;				// ICMPÊı¾İ±¨ÀàĞÍ
-	uint8_t code;				// ±àÂë
-	uint16_t cksum;				// Ğ£ÑéºÍ
-	uint16_t id;				// ±êÊ¶(Í¨³£Îªµ±Ç°½ø³Ìpid)
-	uint16_t seq;				// ĞòºÅ
+	uint8_t type;				// ICMPæ•°æ®æŠ¥ç±»å‹
+	uint8_t code;				// ç¼–ç 
+	uint16_t cksum;				// æ ¡éªŒå’Œ
+	uint16_t id;				// æ ‡è¯†(é€šå¸¸ä¸ºå½“å‰è¿›ç¨‹pid)
+	uint16_t seq;				// åºå·
 } icmp_header;
 
 typedef struct icmp_packet {
-	ether_header eh;				// ÒÔÌ«ÍøÊ×²¿
-	ip_header iph;					// IPv4 Ê×²¿
-	icmp_header icmph;				// ICMP Ê×²¿
+	ether_header eh;				// ä»¥å¤ªç½‘é¦–éƒ¨
+	ip_header iph;					// IPv4 é¦–éƒ¨
+	icmp_header icmph;				// ICMP é¦–éƒ¨
 	uint8_t data[ICMP_DATA_LEN];
 } icmp_packet;
 
 typedef struct tcp_header 
 {
-	uint16_t sport;				// Ô´¶Ë¿ÚºÅ
-	uint16_t dport;				// Ä¿µÄ¶Ë¿ÚºÅ
-	uint32_t seq;				// ĞòºÅ
-	uint32_t ack;				// È·ÈÏºÅ
-	uint8_t lenres;				// 4 bits µÄÊı¾İÆ«ÒÆºÍ 4 bits µÄ±£Áô×Ö¶Î
-	uint8_t flag;				// ±êÖ¾
-	uint16_t win;				// ´°¿Ú³¤¶È
-	uint16_t cksum;				// Ğ£ÑéºÍ
-	uint16_t urp;				// ½ô¼±Ö¸Õë
+	uint16_t sport;				// æºç«¯å£å·
+	uint16_t dport;				// ç›®çš„ç«¯å£å·
+	uint32_t seq;				// åºå·
+	uint32_t ack;				// ç¡®è®¤å·
+	uint8_t lenres;				// 4 bits çš„æ•°æ®åç§»å’Œ 4 bits çš„ä¿ç•™å­—æ®µ
+	uint8_t flag;				// æ ‡å¿—
+	uint16_t win;				// çª—å£é•¿åº¦
+	uint16_t cksum;				// æ ¡éªŒå’Œ
+	uint16_t urp;				// ç´§æ€¥æŒ‡é’ˆ
 } tcp_header;
 
 typedef struct udp_header 
 {
-	uint16_t sport;           	// Ô´¶Ë¿Ú(Source port)
-	uint16_t dport;          	// Ä¿µÄ¶Ë¿Ú(Destination port)
-	uint16_t len;				// UDPÊı¾İ°ü³¤¶È(Datagram length)
-	uint16_t cksum;         	// Ğ£ÑéºÍ(Checksum)
+	uint16_t sport;           	// æºç«¯å£(Source port)
+	uint16_t dport;          	// ç›®çš„ç«¯å£(Destination port)
+	uint16_t len;				// UDPæ•°æ®åŒ…é•¿åº¦(Datagram length)
+	uint16_t cksum;         	// æ ¡éªŒå’Œ(Checksum)
 } udp_header;
 
 #pragma pack(pop)

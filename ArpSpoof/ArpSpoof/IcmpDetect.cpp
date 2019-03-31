@@ -2,10 +2,10 @@
 #include <assert.h>
 
 #define THREAD_TIMEOUT	5000
-#define NR_ROUTER		1 // Íø¹ØÂ·ÓÉÆ÷Ö÷»úºÅ
+#define NR_ROUTER		1 // ç½‘å…³è·¯ç”±å™¨ä¸»æœºå·
 #define TICKS			50
 
-static List g_aliveHosts = NULL; // ´æ»îÖ÷»úÁĞ±í
+static List g_aliveHosts = NULL; // å­˜æ´»ä¸»æœºåˆ—è¡¨
 static int g_ticks = TICKS;
 
 DWORD WINAPI recvICMPThread(LPVOID param)
@@ -16,16 +16,16 @@ DWORD WINAPI recvICMPThread(LPVOID param)
 
 	if (_param->d->addresses != NULL)
 	{
-		// »ñµÃ½Ó¿ÚµÚÒ»¸öµØÖ·µÄÑÚÂë
+		// è·å¾—æ¥å£ç¬¬ä¸€ä¸ªåœ°å€çš„æ©ç 
 		netmask = ((struct sockaddr_in *)(_param->d->addresses->netmask))->sin_addr.S_un.S_addr;
 	}
 	else
 	{
-		// Èç¹û½Ó¿ÚÃ»ÓĞµØÖ·£¬¼ÙÉèÒ»¸öCÀàµÄÑÚÂë
+		// å¦‚æœæ¥å£æ²¡æœ‰åœ°å€ï¼Œå‡è®¾ä¸€ä¸ªCç±»çš„æ©ç 
 		netmask = 0xffffff;
 	}
 
-	// ±àÒë¹ıÂËÆ÷
+	// ç¼–è¯‘è¿‡æ»¤å™¨
 	if (pcap_compile(_param->adhandle, &fcode, "icmp", 1, netmask) < 0)
 	{
 		printf("\nUnable to compile the packet filter. Check the syntax.\n");
@@ -33,7 +33,7 @@ DWORD WINAPI recvICMPThread(LPVOID param)
 		return EXIT_FAILURE;
 	}
 
-	// ÉèÖÃ
+	// è®¾ç½®
 	if (pcap_setfilter(_param->adhandle, &fcode) < 0)
 	{
 		printf("\nError setting the filter.\n");
@@ -41,7 +41,7 @@ DWORD WINAPI recvICMPThread(LPVOID param)
 		return EXIT_FAILURE;
 	}
 
-	// ÊÍ·ÅÉè±¸ÁĞ±í²¢¿ªÊ¼²¶»ñ
+	// é‡Šæ”¾è®¾å¤‡åˆ—è¡¨å¹¶å¼€å§‹æ•è·
 	printf("\nThread[%d] listening on %s...\n", GetCurrentThreadId(), _param->d->description);
 	pcap_freealldevs(_param->alldevs);
 	pcap_loop(_param->adhandle, 0, icmp_packet_handler, NULL);
@@ -62,15 +62,15 @@ void icmp_packet_handler(uint8_t *param, const struct pcap_pkthdr *header, const
 	ip_len = (iph->ver_ihl & 0x0F) << 2;
 	icmph = (icmp_header*)(pkt_data + sizeof(ether_header) + ip_len);
 
-	// ÅĞ¶ÏÊÇ·ñÊÇ»Ø¸´ÎÒ·¢µÄ ICMP ±¨ÎÄ
+	// åˆ¤æ–­æ˜¯å¦æ˜¯å›å¤æˆ‘å‘çš„ ICMP æŠ¥æ–‡
 	if (icmph->type == ICMP_REPLY &&
 		icmph->id == (uint16_t)GetCurrentProcessId())
 	{
 		e.ipv4 = iph->saddr;
 		memcpy(e.mac, eh->saddr, MAC_LEN);
-		List_Add(g_aliveHosts, e); // ½«´æ»îÖ÷»úµÄ IPv4 ºÍ MAC ¼ÓÈëÁĞ±í
+		List_Add(g_aliveHosts, e); // å°†å­˜æ´»ä¸»æœºçš„ IPv4 å’Œ MAC åŠ å…¥åˆ—è¡¨
 
-		// Ã¿Ì½²âµ½ TICKS Ì¨Ö÷»ú¾Í´òÓ¡Ò»¸ö'.'
+		// æ¯æ¢æµ‹åˆ° TICKS å°ä¸»æœºå°±æ‰“å°ä¸€ä¸ª'.'
 		if (g_ticks-- == 0)
 		{
 			printf(".");
@@ -95,9 +95,9 @@ IcmpDetect::~IcmpDetect()
 void IcmpDetect::beginDetect(NetworkAdapter &adapter)
 {
 	uint8_t packet[sizeof(icmp_packet)];
-	uint32_t netaddr; // ÍøÂçµØÖ·
-	uint32_t netmask; // ÍøÂçÑÚÂë
-	uint32_t nr_hosts; // ÍøÂçÄÚ¿É±»·ÖÅä ip µÄÖ÷»úÊı
+	uint32_t netaddr; // ç½‘ç»œåœ°å€
+	uint32_t netmask; // ç½‘ç»œæ©ç 
+	uint32_t nr_hosts; // ç½‘ç»œå†…å¯è¢«åˆ†é… ip çš„ä¸»æœºæ•°
 	uint32_t local_ip;
 	uint32_t dst_ip;
 	uint8_t local_mac[MAC_LEN];
@@ -116,7 +116,7 @@ void IcmpDetect::beginDetect(NetworkAdapter &adapter)
 	netaddr = local_ip & netmask;
 	nr_hosts = htonl(~netmask) - 1;
 
-	// ´´½¨½ÓÊÕÏß³Ì
+	// åˆ›å»ºæ¥æ”¶çº¿ç¨‹
 	m_hRecvThread = CreateThread(NULL, 0, recvICMPThread,
 		(LPVOID)&param, 0, NULL);
 	if (m_hRecvThread == NULL)
@@ -125,7 +125,7 @@ void IcmpDetect::beginDetect(NetworkAdapter &adapter)
 		return;
 	}
 
-	// ·¢ËÍ ICMP ÇëÇó±¨ÎÄ
+	// å‘é€ ICMP è¯·æ±‚æŠ¥æ–‡
 	for (uint32_t host = 1; host < nr_hosts; host++)
 	{
 		dst_ip = netaddr | htonl(host);
@@ -150,22 +150,22 @@ uint16_t IcmpDetect::cksum(uint16_t *p, int len)
 	int cksum = 0;
 	uint16_t answer = 0;
 
-	// ÒÔ16bitsÎªµ¥Î»ÀÛ¼Ó
+	// ä»¥16bitsä¸ºå•ä½ç´¯åŠ 
 	while (len > 1)
 	{
 		uint16_t t = *p;
 		cksum += *p++;
 		len -= 2;
 	}
-	// Èç¹ûÊı¾İµÄ×Ö½ÚÊıÎªÆæÊı, ½«×îºóÒ»¸ö×Ö½ÚÊÓÎª16bitsµÄ¸ß8bits, µÍ8bits²¹0, ¼ÌĞøÀÛ¼Ó
+	// å¦‚æœæ•°æ®çš„å­—èŠ‚æ•°ä¸ºå¥‡æ•°, å°†æœ€åä¸€ä¸ªå­—èŠ‚è§†ä¸º16bitsçš„é«˜8bits, ä½8bitsè¡¥0, ç»§ç»­ç´¯åŠ 
 	if (len == 1)
 	{
 		answer = *(uint16_t *)p;
 		cksum += answer;
 	}
-	// cksumÊÇ32bitsµÄint, ¶øĞ£ÑéºÍÎª16bits, Ğè½«cksumµÄ¸ß16bits¼Óµ½µÍ16bitsÉÏ
+	// cksumæ˜¯32bitsçš„int, è€Œæ ¡éªŒå’Œä¸º16bits, éœ€å°†cksumçš„é«˜16bitsåŠ åˆ°ä½16bitsä¸Š
 	cksum = (cksum >> 16) + (cksum & 0xffff);
-	// °´Î»Çó·´
+	// æŒ‰ä½æ±‚å
 	return (~(uint16_t)cksum);
 }
 
@@ -177,12 +177,12 @@ void IcmpDetect::make_icmp_packet(uint8_t* packet,
 	icmp_packet icmp_pkt;
 	memset(&icmp_pkt, 0, sizeof(icmp_packet));
 
-	// -----------------Ìî³äÒÔÌ«ÍøÊ×²¿-----------------
+	// -----------------å¡«å……ä»¥å¤ªç½‘é¦–éƒ¨-----------------
 	memcpy(icmp_pkt.eh.daddr, dst_mac, MAC_LEN);
 	memcpy(icmp_pkt.eh.saddr, src_mac, MAC_LEN);
 	icmp_pkt.eh.prototype = htons(ETHPROTOCAL_IPV4);
 
-	// -----------------Ìî³ä IPv4 Ê×²¿-----------------
+	// -----------------å¡«å…… IPv4 é¦–éƒ¨-----------------
 	icmp_pkt.iph.ver_ihl = 0x45;
 	icmp_pkt.iph.tlen = htons(sizeof(icmp_pkt) - sizeof(ether_header));
 	icmp_pkt.iph.ttl = 128;
@@ -191,7 +191,7 @@ void IcmpDetect::make_icmp_packet(uint8_t* packet,
 	icmp_pkt.iph.daddr = dst_ip;
 	icmp_pkt.iph.cksum = cksum((uint16_t*)&icmp_pkt.iph, sizeof(ip_header));
 
-	// -----------------Ìî³ä ICMP Ê×²¿-----------------
+	// -----------------å¡«å…… ICMP é¦–éƒ¨-----------------
 	icmp_pkt.icmph.type = type;
 	icmp_pkt.icmph.id = (uint16_t)GetCurrentProcessId();
 	icmp_pkt.icmph.seq = htons(seq);

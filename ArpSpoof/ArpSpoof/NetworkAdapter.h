@@ -30,12 +30,12 @@ private:
 	void getAdapterParams();
 
 private:
-	pcap_if_t *m_alldevs;				// ÍøÂçÊÊÅäÆ÷Á´±í½á¹¹
-	pcap_if_t *m_d;						// ÊÊÅäÆ÷Á´±í½Úµã¶¨Î»Ö¸Õë
-	pcap_t *m_adhandle;					// ÍøÂçÊÊÅäÆ÷¾ä±ú
-	pcap_addr_t *m_paddr;				// Íø¿¨µØÖ·½á¹¹
-	char m_AdapterName[PCAP_BUF_SIZE];	// ÍøÂçÊÊÅäÆ÷Ãû×Ö
-	int m_devnum;						// ÊÊÅäÆ÷ÊıÁ¿ (unused)
+	pcap_if_t *m_alldevs;				// ç½‘ç»œé€‚é…å™¨é“¾è¡¨ç»“æ„
+	pcap_if_t *m_d;						// é€‚é…å™¨é“¾è¡¨èŠ‚ç‚¹å®šä½æŒ‡é’ˆ
+	pcap_t *m_adhandle;					// ç½‘ç»œé€‚é…å™¨å¥æŸ„
+	pcap_addr_t *m_paddr;				// ç½‘å¡åœ°å€ç»“æ„
+	char m_AdapterName[PCAP_BUF_SIZE];	// ç½‘ç»œé€‚é…å™¨åå­—
+	int m_devnum;						// é€‚é…å™¨æ•°é‡ (unused)
 };
 
 #endif // NETWORK_ADAPTER_H
