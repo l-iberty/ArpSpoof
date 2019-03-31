@@ -15,8 +15,8 @@ private:
 	void make_arpspoof_packet(uint8_t *packet, uint32_t dst_ip, uint32_t src_ip);
 
 private:
-	pcap_t *m_adhandle; // ÍøÂçÊÊÅäÆ÷¾ä±ú
-	uint8_t m_local_mac[MAC_LEN]; // ±¾»ú MAC µØÖ·
+	pcap_t *m_adhandle; // ç½‘ç»œé€‚é…å™¨å¥æŸ„
+	uint8_t m_local_mac[MAC_LEN]; // æœ¬æœº MAC åœ°å€
 };
 
 #endif // ARP_SPOOF_H
