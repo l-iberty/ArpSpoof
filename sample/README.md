@@ -20,7 +20,7 @@
 ## 查看被攻击主机的ARP缓存：
 在Android手机上安装一个终端模拟器, 可以查看到攻击前后的ARP缓存的变化情况：
 
-![](images/3.png)
+<img src="images/3.png" height="500" align=center/>
 
 ## 攻击结果分析
 - 启动`ArpSpoof.exe`后，本机网络连接出现异常，只能通过重启解决；
